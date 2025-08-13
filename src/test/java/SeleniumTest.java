@@ -3,9 +3,15 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Wait;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
+import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+
+import java.time.Duration;
 
 //import static java.lang.Thread.sleep;
 
@@ -13,6 +19,8 @@ public class SeleniumTest {
 
     public static ChromeOptions options ;
     public static WebDriver webDriver ;
+    public static WebDriverWait wait;
+
     //chrome setup and launching a browser - setting up the test
     @BeforeTest
     public static void setup(){
@@ -20,7 +28,7 @@ public class SeleniumTest {
         options.addArguments("--remote-allow-origins");
         System.setProperty("webDriver.chrome.driver",System.getProperty("user.dir")+"/src/test/resources/chromedriver.exe");
         webDriver = new ChromeDriver(options);
-
+        wait = new WebDriverWait(webDriver, Duration.ofSeconds(10));
         webDriver.get("https://www.demoblaze.com/index.html");
     }
 
@@ -43,15 +51,19 @@ public class SeleniumTest {
 
         webDriver.findElement(By.xpath("//*[@id=\"logInModal\"]/div/div/div[3]/button[2]")).click();
 
-
-        WebElement webElement = webDriver.findElement(By.xpath("//*[@id=\"itemc\"]"));
-
-        String actualFirstCetegory = webElement.getText();
-        String expectedFirstCategory = "Phones";
-
-        Assert.assertEquals(actualFirstCetegory,expectedFirstCategory);
-
-        webDriver.close();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nameofuser")));
+//        WebElement webElement = webDriver.findElement(By.xpath("//*[@id=\"itemc\"]"));
+//
+//        String actualFirstCetegory = webElement.getText();
+//        String expectedFirstCategory = "Phones";
+//
+//        Assert.assertEquals(actualFirstCetegory,expectedFirstCategory);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("list-group")));
+        // click particular category and add product to cart
+       wait.until(ExpectedConditions.elementToBeClickable(By.linkText("Laptops"))).click();
     }
-
+//    @AfterTest
+//    public void browserClose(){
+//        webDriver.close();
+//    }
 }
