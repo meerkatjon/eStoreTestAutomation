@@ -30,6 +30,7 @@ public class SeleniumTest {
         webDriver = new ChromeDriver(options);
         wait = new WebDriverWait(webDriver, Duration.ofSeconds(10));
         webDriver.get("https://www.demoblaze.com/index.html");
+        webDriver.manage().window().fullscreen();
     }
 
     @Test
@@ -52,18 +53,32 @@ public class SeleniumTest {
         webDriver.findElement(By.xpath("//*[@id=\"logInModal\"]/div/div/div[3]/button[2]")).click();
 
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nameofuser")));
-//        WebElement webElement = webDriver.findElement(By.xpath("//*[@id=\"itemc\"]"));
-//
-//        String actualFirstCetegory = webElement.getText();
-//        String expectedFirstCategory = "Phones";
-//
-//        Assert.assertEquals(actualFirstCetegory,expectedFirstCategory);
+
+        // searching for string
+        WebElement webElement = webDriver.findElement(By.xpath("//*[@id=\"itemc\"]"));
+
+        String actualFirstCetegory = webElement.getText();
+        String expectedFirstCategory = "Phones";
+        Assert.assertEquals(actualFirstCetegory,expectedFirstCategory);
+
+       //category visibility
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("list-group")));
-        // click particular category and add product to cart
-       wait.until(ExpectedConditions.elementToBeClickable(By.linkText("Laptops"))).click();
+
+        // click particular category
+       wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[text()='Laptops']"))).click();
+
+       //wait for products to load
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("tbodyid")));
+
+        //Wait for known laptop product to appear - wait for screen to load then click product
+        wait.until(ExpectedConditions.textToBePresentInElementLocated(By.cssSelector("#tbodyid .card-title a"), "Sony vaio i5"));
+        //click first product
+        webDriver.findElement(By.cssSelector("#tbodyid .card-title a")).click();
+       //and add product to cart
+       wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[text()='Add to cart']"))).click();
     }
-//    @AfterTest
-//    public void browserClose(){
-//        webDriver.close();
-//    }
+    @AfterTest
+    public void browserClose(){
+        webDriver.close();
+    }
 }
